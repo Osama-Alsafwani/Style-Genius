@@ -1,5 +1,7 @@
-#Frontend Structure
+# Frontend Structure
+
 style-genius-frontend/
+
 ├─ src/ 
 │ ├─ components/ # Shared UI components 
 │ ├─ features/ # Feature-specific components (auth, style-profile, feed) 
