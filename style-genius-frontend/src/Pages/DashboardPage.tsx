@@ -1,15 +1,8 @@
+import { useState } from "react";
 import Spinner from "../component/Spinner";
 import { useAuthStore } from "../lib/store/authStore";
 import { useQuery } from "@tanstack/react-query";
-
-interface Analysis {
-  imageUrl: string;
-  predictions: {
-    className: string;
-    probability: number;
-  }[];
-  date: string;
-}
+import AnalysisModal, { Analysis } from "../component/AnalysisModal";
 
 export default function DashboardPage() {
   const { user, logout, token } = useAuthStore();
@@ -23,6 +16,10 @@ export default function DashboardPage() {
       return res.json();
     },
   });
+
+  const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(
+    null
+  );
 
   if (isLoading) return <Spinner />;
 
@@ -49,10 +46,13 @@ export default function DashboardPage() {
             {userData?.analyses?.map((analysis: Analysis) => (
               <div
                 key={analysis.date}
-                className="bg-white p-4 rounded-lg shadow"
+                onClick={() => setSelectedAnalysis(analysis)}
+                className="cursor-pointer hover:shadow-lg transition-shadow"
               >
                 <img
-                  src={`http://localhost:5000${analysis.imageUrl}`}
+                  src={`${import.meta.env.VITE_API_BASE_URL}${
+                    analysis.imageUrl
+                  }`}
                   alt="Analysis"
                   className="w-full object-cover rounded-t-lg"
                 />
@@ -76,6 +76,13 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {selectedAnalysis && (
+        <AnalysisModal
+          analysis={selectedAnalysis}
+          onClose={() => setSelectedAnalysis(null)}
+        />
+      )}
     </div>
   );
 }
